@@ -13,18 +13,21 @@ setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE
 # Tools
 eval "$(fnm env --use-on-cd --shell zsh)"
 eval "$(starship init zsh)"
+export EDITOR="code --wait"
 
 # User configuration
 ## Custom aliases
 alias docker=podman
 alias gaa="git add *"
+alias gc='f() { git commit -m "$1" };f'
 alias gca="git commit --amend --no-edit"
+alias gp="git push"
 alias gpf="git push --force-with-lease"
 alias ls="eza --icons"
 alias ll="eza -la --icons --git"
 alias lt="eza --tree --level=2 --icons"
 alias reload="source ~/.zshrc"
-alias zshconfig="code ~/.zshrc"
+alias zshconfig="chezmoi edit ~/.zshrc"
 
 # Plugins
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
