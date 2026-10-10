@@ -1,0 +1,61 @@
+- name: Install jenv
+  homebrew:
+    name: jenv
+    state: present
+
+- name: Ensure jenv is in PATH
+  lineinfile:
+    path: ~/.zshrc
+    line: 'export PATH="$HOME/.jenv/bin:$PATH"'
+    state: present
+    insertafter: EOF
+
+- name: Ensure jenv is loaded into shell automatically
+  lineinfile:
+    path: ~/.zshrc
+    line: 'eval "$(jenv init -)"'
+    state: present
+    insertafter: EOF
+
+- name: Load jenv and enable jenv export plugin
+  shell: |
+    eval "$(jenv init -)" && jenv enable-plugin export
+  changed_when: False
+
+- name: Install openjdk 17
+  homebrew:
+    name: openjdk@17
+    state: present
+  register: openjdk_17_install_result
+
+- name: Link openjdk 17
+  shell: |
+    jenv add /opt/homebrew/opt/openjdk@17
+  when: openjdk_17_install_result.changed == true
+
+- name: Install openjdk 21
+  homebrew:
+    name: openjdk@21
+    state: present
+  register: openjdk_21_install_result
+
+- name: Link openjdk 21
+  shell: |
+    jenv add /opt/homebrew/opt/openjdk@21
+  when: openjdk_21_install_result.changed == true
+
+- name: Install openjdk 25
+  homebrew:
+    name: openjdk@25
+    state: present
+  register: openjdk_25_install_result
+
+- name: Link openjdk 25
+  shell: |
+    jenv add /opt/homebrew/opt/openjdk@25
+  when: openjdk_25_install_result.changed == true
+
+- name: Set global java version
+  shell: |
+    jenv global 25
+  when: openjdk_25_install_result.changed == true

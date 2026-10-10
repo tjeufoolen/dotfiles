@@ -1,0 +1,36 @@
+- name: Install node version manager
+  homebrew:
+    name: n
+    state: present
+
+- name: Check latest node version
+  command: n --latest
+  register: node_latest_version
+  changed_when: False
+
+- name: Check if latest node version is installed
+  shell: n ls | grep {{node_latest_version.stdout}}
+  register: node_latest_version_installed
+  ignore_errors: true
+  changed_when: False
+
+- name: Install latest node version
+  become: true
+  command: n latest
+  when: node_latest_version_installed.failed
+
+- name: Check lts node version
+  command: n --lts
+  register: node_lts_version
+  changed_when: False
+
+- name: Check if lts node version is installed
+  shell: n ls | grep {{node_lts_version.stdout}}
+  register: node_lts_version_installed
+  ignore_errors: true
+  changed_when: False
+
+- name: Install lts node version
+  become: true
+  command: n lts
+  when: node_lts_version_installed.failed

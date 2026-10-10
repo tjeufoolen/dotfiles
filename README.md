@@ -1,199 +1,168 @@
-# Dotfiles
+# My Mac Setup (Automated with Ansible)
 
-My macOS setup, managed with [chezmoi](https://www.chezmoi.io/).
+This repo contains a partly automated setup using **Ansible** to configure my personal Mac with apps, settings, dotfiles, and tools.
 
-## What's in here
+## Table of Contents
 
-| Path in repo                                      | Applied to                 | Purpose                                                           |
-| ------------------------------------------------- | -------------------------- | ----------------------------------------------------------------- |
-| `dot_zshrc`                                       | `~/.zshrc`                 | zsh config (completions, plugins, aliases, fnm, starship, SDKMAN) |
-| `dot_config/ghostty/config`                       | `~/.config/ghostty/config` | Ghostty terminal                                                  |
-| `dot_config/starship.toml`                        | `~/.config/starship.toml`  | Starship prompt (Gruvbox preset)                                  |
-| `dot_gitconfig`                                   | `~/.gitconfig`             | Git config (if tracked)                                           |
-| `empty_dot_hushlogin`                             | `~/.hushlogin`             | Hides the "Last login" line                                       |
-| `Brewfile`                                        | not copied (ignored)       | All Homebrew formulae, casks and App Store apps                   |
-| `run_onchange_before_10-install-packages.sh.tmpl` | runs on apply              | Runs `brew bundle` whenever the Brewfile changes                  |
-| `run_once_after_20-setup.sh`                      | runs once per machine      | SDKMAN, Node LTS, macOS `defaults`                                |
+- [My Mac Setup (Automated with Ansible)](#my-mac-setup-automated-with-ansible)
+  - [Table of Contents](#table-of-contents)
+  - [Automated Setup](#automated-setup)
+    - [Quick Start](#quick-start)
+      - [📦 0. Prerequisites](#-0-prerequisites)
+        - [🛠️ Install Homebrew (if not installed)](#️-install-homebrew-if-not-installed)
+        - [🛠️ Install Ansible via Homebrew](#️-install-ansible-via-homebrew)
+      - [🚀 1. Clone this repository](#-1-clone-this-repository)
+      - [⚙️ 2. Run the Ansible playbook](#️-2-run-the-ansible-playbook)
+    - [Ansible Playbook Overview](#ansible-playbook-overview)
+  - [Manual Setup](#manual-setup)
+    - [OS Settings](#os-settings)
+      - [Finder](#finder)
+      - [Dock](#dock)
+    - [Application Settings](#application-settings)
+      - [Raycast](#raycast)
+      - [Rectangle](#rectangle)
+      - [Warp](#warp)
+      - [Alt Tab](#alt-tab)
+      - [Todoist](#todoist)
+      - [AltTab](#alttab)
+  - [Contributing](#contributing)
 
-## Setting up a new Mac
+---
 
-### 1. Prerequisites
+## Automated Setup
 
-1. Sign in to the **App Store** (needed for `mas` apps like WireGuard).
-2. Install Homebrew (its installer also installs the Xcode command line tools if they're missing):
-   ```sh
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   eval "$(/opt/homebrew/bin/brew shellenv)"
-   ```
-3. Create a new SSH key and add it to GitHub. **Do this before step 2 below**, because the dotfiles repo is cloned over SSH. The old Mac's private key is not restored; every Mac gets its own key.
+### Quick Start
 
-   ```sh
-   ssh-keygen -t ed25519 -C "<email>"
-   ```
+#### 📦 0. Prerequisites
 
-   Create `~/.ssh/config` so the key is loaded from the macOS Keychain:
+This setup assumes the following is installed:
 
-   ```
-   Host github.com
-     AddKeysToAgent yes
-     UseKeychain yes
-     IdentityFile ~/.ssh/id_ed25519
-   ```
+- **[Homebrew](https://brew.sh)** – package manager for macOS
+- **Ansible** – automation tool
 
-   Add the key to the agent, copy the public key, and add it on GitHub (Settings → SSH and GPG keys → New SSH key):
+Furthermore this setup requires passwordless sudo permissions for Homebrew installs. Make sure you're system is setup for this. An easy way to check is to see if `cat /etc/sudoers.d/homebrew` returns anything comparable to `%admin ALL=(ALL) NOPASSWD: ALL` (or more specific for non personal mac setups).
 
-   ```sh
-   ssh-add --apple-use-keychain ~/.ssh/id_ed25519
-   pbcopy < ~/.ssh/id_ed25519.pub
-   ```
+##### 🛠️ Install Homebrew (if not installed)
 
-   Check that it works (it should greet me by username):
-
-   ```sh
-   ssh -T git@github.com
-   ```
-
-   If the old Mac is retired, remove its key from the same GitHub page.
-
-### 2. Apply the dotfiles
-
-```sh
-brew install chezmoi
-chezmoi init --apply git@github.com:tjeufoolen/dotfiles.git
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-This clones the repo over SSH, copies the config files into place, installs everything in the Brewfile, and runs the one-time setup script. If it fails with a permission error, the SSH key from step 1.3 is not set up correctly.
+Then add it to your shell (e.g. in `.zshrc`):
 
-### 3. Restart the terminal
-
-Quit Ghostty (Cmd+Q) and reopen it. If Nerd Font icons or the font don't show up, reboot once so macOS registers the newly installed fonts.
-
-### 4. Manual steps (not automated)
-
-Open a new terminal tab first, so zsh, SDKMAN and fnm are loaded.
-
-#### Apple (System Settings)
-
-- Spotlight → Results from System → uncheck everything except **Apps** and **Menu items**
-
-#### Firefox
-
-- Log in to the account and turn on sync
-
-#### Ghostty
-
-- The config is tracked as `~/.config/ghostty/config`. Keep only one config file (not also `config.ghostty` in `~/Library/Application Support/com.mitchellh.ghostty/`), otherwise Ghostty loads both
-- Check it with `ghostty +show-config | grep -E "font-family|^theme"`
-
-#### Git and GitHub
-
-Git uses SSH (key created in the prerequisites), so `gh auth setup-git` is not needed.
-
-```sh
-gh auth login      # choose GitHub.com, protocol SSH, authenticate with the browser
-gh auth status
+```bash
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
-- If the identity is not tracked, create `~/.gitconfig.local` with my name and email
-- Shell completion:
-  ```sh
-  gh completion -s zsh > /opt/homebrew/share/zsh/site-functions/_gh
-  rm -f ~/.zcompdump*
-  ```
+##### 🛠️ Install Ansible via Homebrew
 
-#### mas (App Store)
-
-These are normally installed through the Brewfile. Manually:
-
-```sh
-mas install 497799835     # Xcode (mas search xcode doesn't always show it; use the ID)
-mas install 1451685025    # WireGuard
+```bash
+brew install ansible
 ```
 
-#### SDKMAN
+---
 
-```sh
-sdk list java | grep -- '-tem'
-sdk install java <21.x.y-tem>     # copy the exact identifier from the list
-sdk install java <25.x.y-tem>
-sdk install maven
-sdk install gradle
+#### 🚀 1. Clone this repository
+
+```bash
+git clone https://github.com/tjeufoolen/mac-setup.git
+cd mac-setup/ansible
 ```
 
-#### fnm
+---
 
-```sh
-fnm install --lts
-fnm default lts-latest
+#### ⚙️ 2. Run the Ansible playbook
+
+```bash
+ansible-playbook -i inventory.ini playbook.yml --ask-become-pass
 ```
 
-#### macOS
+You can do a dry run (check mode) to test compliance by appending `--check --diff` to the command above.
 
-- `~/.hushlogin` is tracked by chezmoi. If it's missing: `touch ~/.hushlogin`
+---
 
-#### Visual Studio Code
+### Ansible Playbook Overview
 
-- Log in to the account and turn on Settings Sync
+The main playbook is located in `ansible/playbook.yml` and includes tasks for:
 
-#### WhatsApp
+- Installing packages from `Brewfile`
+- Setting macOS defaults
+- Setting up dotfiles (e.g., `.zshrc`)
+- Configuring Git
+- Setting up config directories (e.g., `.warp`)
+- Ensuring commonly used folders exist
 
-- Disable all notifications
+Make sure to review and edit:
 
-#### WireGuard
+- `inventory.ini`: Defines your local target
+- `files/`, `templates/`, and `tasks/`: Where configuration and logic live
 
-- Import the tunnel(s) from the `.conf` file in my password manager (menu bar icon → Import tunnel(s) from file)
+---
 
-#### Podman
+## Manual Setup
 
-```sh
-softwareupdate --install-rosetta --agree-to-license
-podman machine init
-podman machine start
-podman completion zsh > /opt/homebrew/share/zsh/site-functions/_podman
-rm -f ~/.zcompdump*
-```
+### OS Settings
 
-In Podman Desktop → Settings:
+These are **not automated** yet and may still require manual tweaking.
 
-- Docker compatibility → enable
-- Docker compatibility → install the compose extension
-- Disable "start Podman on system start"
+#### Finder
 
-#### IntelliJ
+- Preferences
 
-- Disable telemetry
-- Settings → Backup & sync → log in and turn it on
-- Settings → Backup & sync → sync across all products
+  - General → Show these items on the desktop → None
+  - Sidebar → Show: Airdrop, Applications, Downloads, Desktop, iCloud Drive, Workspace
+  - Advanced → Show all filename extensions: ✅
+  - When performing a search: Search current folder
 
-## Daily workflow
+- View
 
-```sh
-chezmoi edit ~/.zshrc        # edit the source file
-chezmoi diff                 # preview changes
-chezmoi apply -v             # write changes to $HOME
-chezmoi re-add               # pull manual edits of tracked files back into the repo
-chezmoi cd                   # go to the repo, then commit and push
-```
+  - As List, Sort by Kind
+  - Show Status Bar, Path Bar, Tab Bar
 
-### Adding a Homebrew package
+#### Dock
 
-```sh
-brew install <name>
-brew bundle dump --force --file="$(chezmoi source-path)/Brewfile"
-git -C "$(chezmoi source-path)" diff Brewfile    # check before committing
-```
+- Preferences → Dock & Menu Bar
 
-### Adding a new config file
+  - Disable "Show recent applications in Dock"
 
-```sh
-chezmoi add ~/.config/<tool>/<file>
-```
+---
 
-## Not stored in this repo
+### Application Settings
 
-- SSH keys (a new key is created per Mac, see prerequisites), API tokens, `.env` files
-- WireGuard `.conf` files (contain private keys)
-- `~/.zsh_history`
-- `~/.config/gh/hosts.yml` and other per-machine login state
+Some GUI apps require manual config. Here’s how I set mine:
 
-Machine-specific or secret shell settings go in `~/.zshrc.local`, which `.zshrc` sources if it exists.
+#### Raycast
+
+- Clipboard History Hotkey → `Cmd + Shift + C`
+- Enable "Show Raycast in menu bar"
+
+#### Rectangle
+
+- Enable cycling through sizes (1/2, 2/3, 1/3)
+- Hide menu bar icon
+
+#### Warp
+
+- Appearance → Prompt: `Shell prompt (PS1)`
+- Theme: `Fox`
+
+#### Alt Tab
+
+- Controls → Shortcut 1 → Hold `Cmd` instead of `Ctrl`
+
+#### Todoist
+
+- Right-click menu bar icon → Hide Menu Bar Item
+
+#### AltTab
+
+- Preferences → General → Menubar icon → Select empty icon
+
+---
+
+## Contributing
+
+Feel free to fork this repo and customize it to fit your own setup or team needs!
+
+---

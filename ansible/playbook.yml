@@ -1,0 +1,15 @@
+- name: Setup Mac for development
+  hosts: local
+
+  vars:
+    ansible_shell_executable: /bin/zsh
+    git_user_name: "tjeufoolen"
+    git_user_email: "12643433+tjeufoolen@users.noreply.github.com"
+
+  roles:
+    - homebrew
+    - git
+    - zsh
+    - java
+    - nodejs
+    - workspace

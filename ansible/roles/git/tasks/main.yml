@@ -1,0 +1,39 @@
+- name: Install git
+  homebrew:
+    name: git
+    state: present
+
+- name: Install git-lfs
+  homebrew:
+    name: git-lfs
+    state: present
+
+- name: Set global Git username
+  git_config:
+    name: user.name
+    scope: global
+    value: "{{ git_user_name }}"
+
+- name: Set global Git email
+  git_config:
+    name: user.email
+    scope: global
+    value: "{{ git_user_email }}"
+
+- name: Set global Git editor
+  git_config:
+    name: core.editor
+    scope: global
+    value: code
+
+- name: Set global Git pull strategy
+  git_config:
+    name: pull.rebase
+    scope: global
+    value: true
+
+- name: Set global Git rebase auto-stash
+  git_config:
+    name: rebase.autoStash
+    scope: global
+    value: true
