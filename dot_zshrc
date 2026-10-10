@@ -17,6 +17,7 @@ export EDITOR="code --wait"
 
 # User configuration
 ## Custom aliases
+alias dev="cd ~/Workspace"
 alias docker=podman
 alias gaa="git add *"
 alias gc='f() { git commit -m "$1" };f'
