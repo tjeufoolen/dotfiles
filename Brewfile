@@ -22,6 +22,8 @@ brew "zsh-completions"
 brew "zsh-syntax-highlighting"
 # Password manager that keeps all passwords secure behind one password
 cask "1password"
+# Integrated CAD, CAM, CAE, and PCB software
+cask "autodesk-fusion"
 # Anthropic's official Claude AI desktop app
 cask "claude"
 # Voice and text chat software
