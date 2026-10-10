@@ -23,9 +23,9 @@ alias gc='f() { git commit -m "$1" };f'
 alias gca="git commit --amend --no-edit"
 alias gp="git push"
 alias gpf="git push --force-with-lease"
-alias ls="eza --icons"
-alias ll="eza -la --icons --git"
-alias lt="eza --tree --level=2 --icons"
+alias ls="eza --icons --sort=type"
+alias ll="eza -la --icons --git --sort=type"
+alias lt="eza --tree --level=2 --icons --sort=type"
 alias reload="source ~/.zshrc"
 alias zshconfig="chezmoi edit ~/.zshrc"
 
