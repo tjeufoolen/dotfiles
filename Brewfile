@@ -41,6 +41,8 @@ cask "jetbrains-toolbox"
 cask "nordvpn"
 # Browse, manage, inspect containers and images
 cask "podman-desktop"
+# Move and resize windows using keyboard shortcuts or snap areas
+cask "rectangle"
 # Open-source code editor
 cask "visual-studio-code"
 # Native desktop client for WhatsApp
