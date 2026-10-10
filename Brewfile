@@ -4,6 +4,8 @@ brew "chezmoi"
 brew "eza"
 # Fast and simple Node.js version manager
 brew "fnm"
+# GitHub command-line tool
+brew "gh"
 # Distributed revision control system
 brew "git"
 # Mac App Store command-line interface
