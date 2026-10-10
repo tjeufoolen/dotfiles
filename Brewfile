@@ -24,6 +24,8 @@ brew "zsh-syntax-highlighting"
 cask "1password"
 # Integrated CAD, CAM, CAE, and PCB software
 cask "autodesk-fusion"
+# 3D model slicing software for 3D printers, maintained by Bambu Lab
+cask "bambu-studio"
 # Anthropic's official Claude AI desktop app
 cask "claude"
 # Voice and text chat software
