@@ -2,6 +2,8 @@
 brew "chezmoi"
 # Modern, maintained replacement for ls
 brew "eza"
+# Play, record, convert, and stream select audio and video codecs
+brew "ffmpeg"
 # Fast and simple Node.js version manager
 brew "fnm"
 # GitHub command-line tool

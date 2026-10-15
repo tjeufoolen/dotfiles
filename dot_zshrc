@@ -28,6 +28,7 @@ alias ls="eza --icons --sort=extension"
 alias ll="eza -la --icons --git --sort=extension"
 alias lt="eza --tree --level=2 --icons --sort=extension"
 alias reload="source ~/.zshrc"
+alias wav2mp3='for f in *.wav; do ffmpeg -i "$f" -codec:a libmp3lame -q:a 2 "${f%.wav}.mp3"; done'
 alias zshconfig="chezmoi edit ~/.zshrc"
 
 # Plugins
