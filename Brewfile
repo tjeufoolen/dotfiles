@@ -28,6 +28,8 @@ cask "1password"
 cask "autodesk-fusion"
 # 3D model slicing software for 3D printers, maintained by Bambu Lab
 cask "bambu-studio"
+# Web browser focusing on privacy
+cask "brave-browser"
 # Anthropic's official Claude AI desktop app
 cask "claude"
 # Voice and text chat software
