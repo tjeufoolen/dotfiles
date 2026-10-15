@@ -19,6 +19,7 @@ export EDITOR="code --wait"
 ## Custom aliases
 alias dev="cd ~/Workspace"
 alias docker=podman
+alias dump_brewfile='f() { brew bundle dump --force --file="$(chezmoi source-path)/Brewfile" };f'
 alias gaa="git add *"
 alias gc='f() { git commit -m "$1" };f'
 alias gca="git commit --amend --no-edit"

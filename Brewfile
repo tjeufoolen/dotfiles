@@ -51,6 +51,9 @@ cask "rectangle"
 cask "visual-studio-code"
 # Native desktop client for WhatsApp
 cask "whatsapp"
+mas "Keynote", id: 361285480
+mas "Numbers", id: 361304891
+mas "Pages", id: 361309726
 mas "WireGuard", id: 1451685025
 mas "Xcode", id: 497799835
 vscode "alefragnani.bookmarks"

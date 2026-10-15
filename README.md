@@ -108,6 +108,9 @@ These are normally installed through the Brewfile. Manually:
 ```sh
 mas install 497799835     # Xcode (mas search xcode doesn't always show it; use the ID)
 mas install 1451685025    # WireGuard
+mas install 361304891     # Numbers (spreadsheets)
+mas install 361309726     # Pages (documents)
+mas install 361285480     # Keynote (presentations)
 ```
 
 #### SDKMAN
