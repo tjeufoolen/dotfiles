@@ -6,10 +6,14 @@ brew "eza"
 brew "ffmpeg"
 # Fast and simple Node.js version manager
 brew "fnm"
+# Command-line fuzzy finder written in Go
+brew "fzf"
 # GitHub command-line tool
 brew "gh"
 # Distributed revision control system
 brew "git"
+# Git extension for versioning large files
+brew "git-lfs"
 # Mac App Store command-line interface
 brew "mas"
 # Tool for managing OCI containers and pods
