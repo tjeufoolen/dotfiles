@@ -17,19 +17,66 @@ export EDITOR="code --wait"
 
 # User configuration
 ## Custom aliases
-alias dev="cd ~/Workspace"
-alias docker=podman
-alias dump_brewfile='f() { brew bundle dump --force --file="$(chezmoi source-path)/Brewfile" };f'
-alias gaa="git add *"
-alias gc='f() { git commit -m "$1" };f'
-alias gca="git commit --amend --no-edit"
-alias gp="git push"
-alias gpf="git push --force-with-lease"
+### Directory listing
 alias ls="eza --icons --sort=extension"
 alias ll="eza -la --icons --git --sort=extension"
 alias lt="eza --tree --level=2 --icons --sort=extension"
-alias reload="source ~/.zshrc"
+
+### Navigating
+alias dev="cd ~/Workspace"
+
+### Git
+alias gaa="git add -A"
+gc() {
+    git commit -m "$*"
+}
+alias gca="git commit --amend --no-edit"
+alias gp="git push"
+alias gpf="git push --force-with-lease"
+gsw() {
+  local branch
+  branch=$(git branch --sort=-committerdate --format='%(refname:short)' \
+    | fzf --height=40% --reverse --prompt='branch> ') || return
+  git switch "$branch"
+}
+gswa() {
+  local branch
+  branch=$(git branch --all --sort=-committerdate --format='%(refname:short)' \
+    | sed 's|^origin/||' | grep -v '^HEAD' | awk '!seen[$0]++' \
+    | fzf --height=40% --reverse) || return
+  git switch "$branch"
+}
+remove-branches() {
+    git branch | grep -v "develop" | grep -v "main" | xargs git branch -D
+}
+
+### Docker
+alias docker=podman
+
+### Sdkman
+sdklist () {
+    for c in ~/.sdkman/candidates/*/; do
+        name=$(basename "$c")
+        current=$(basename "$(readlink "$c/current")" 2>/dev/null)
+        printf "\033[1m%s\033[0m  \033[2m%s\033[0m\n" "$name" "${c%/}"
+        for v in "$c"*/; do
+            ver=$(basename "$v")
+            [ "$ver" = "current" ] && continue
+            if [ "$ver" = "$current" ]; then
+                printf "  \033[32m* %-20s\033[0m \033[2m%s\033[0m\n" "$ver (current)" "${v%/}"
+            else
+                printf "    %-20s \033[2m%s\033[0m\n" "$ver" "${v%/}"
+            fi
+        done
+    done
+}
+
+### Media management
 alias wav2mp3='for f in *.wav; do ffmpeg -i "$f" -codec:a libmp3lame -q:a 2 "${f%.wav}.mp3"; done'
+
+### Shell
+alias dump_brewfile='f() { brew bundle dump --force --file="$(chezmoi source-path)/Brewfile" };f'
+alias reload="clear && source ~/.zshrc"
 alias zshconfig="chezmoi edit ~/.zshrc"
 
 # Plugins
